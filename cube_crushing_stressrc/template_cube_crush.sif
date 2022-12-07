@@ -1,0 +1,336 @@
+Header
+  Mesh DB "." "{FOLDER}"
+End
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+Simulation
+  Coordinate System  = Cartesian {DIM}D
+  Simulation Type = Transient
+
+  Timestepping Method = "bdf"
+  BDF Order = 1
+  {TSTEP_LINES}
+
+  Steady State Min Iterations = 1
+  Steady State Max Iterations = 1
+
+  !Output File = "test.result"
+  Post File = "{UGRAD}_{FNAME}_{TEMP}.vtu"
+  max output level = 3
+
+  Initialize Dirichlet Conditions = Logical False
+End
+
+Constants
+   Gas Constant = Real 8.314
+End
+
+!%%%%%%%%%%%%%%%%%%%%%      Body Force
+Body Force 1
+  ! AIFlow Force 2 = Real -0.00899  ! body force, i.e. gravity * density
+End
+
+!%%%%%%%%%%%%%%%%%%%%%      Material
+Material 1
+!!!!! For AIFlows...
+  Powerlaw Exponent = Real 1.0         !
+  Reference Temperature = Real -10.0   ! T0 (Celsius)!
+  Fluidity Parameter = Real 20.        ! Bn(T0)
+  Limit Temperature = Real -5.0        ! TL  (Celsius)!
+  Activation Energy 1 = Real 7.8e04    ! Joule/mol for T<TL
+  Activation Energy 2 = Real 7.8e04    ! Joule/mol for T>TL
+
+  Viscosity File = FILE "040010010.Va"
+
+  Isotropic = Logical False !If set to true Glen flow law (no need to defined Fabric)
+
+!!!! For Fabric Solver
+  Interaction Parameter = Real 0.06 ! 0=> Fabric Evolution function of Strain-rates 1=> Fabric Evolution function of dev stresses
+                                  !If not defined set to the default value given in Viscosity File
+  Diffusion Intercept = Real 1.e16   ! Diffusion term. By default set to 0 if not defined
+  Diffusion Parameter = Real 0.0   ! Diffusion term. By default set to 0 if not defined
+  Max Diffusion = Real {LAMBDA}
+  Migration Prefactor = Real 1.0e8
+  Migration A = Real 0.0
+
+  ! Migration Gamma = Real 0.1
+  Max Migration = Real {GAMMA}
+
+  Lattice Rotation = Real {LATROT}
+
+  Spatial Fabric Diffusion = Real 1.0e-5
+End
+
+!%%%%%%%%%%%%%%%%%%%%%      Initial Condition
+Initial Condition 1
+  Fabric 1 = Real 0.333333333333333 !a2_11
+  Fabric 2 = Real 0.333333333333333 !a2_22
+  Fabric 3 = Real 0.               !a2_12
+  Fabric 4 = Real 0.               !a2_23
+  Fabric 5 = Real 0.               !a2_13
+
+  FabricR 1 = Real 0.28209478329945054 !a2_11
+  FabricR 2 = Real 0.0 !a2_22
+  FabricR 3 = Real 0.0               !a2_12
+  FabricR 4 = Real 0.0               !a2_23
+  FabricR 5 = Real 0.0               !a2_13
+  FabricR 6 = Real 0.0               !a2_12
+  FabricR 7 = Real 0.0               !a2_23
+  FabricR 8 = Real 0.0               !a2_13
+  FabricR 9 = Real 0.               !a2_12
+  FabricR 10 = Real 0.               !a2_23
+  FabricR 11 = Real 0.               !a2_13
+  FabricR 12 = Real 0.               !a2_13
+  FabricR 13 = Real 0.               !a2_13
+  FabricR 14 = Real 0.               !a2_13
+  FabricR 15 = Real 0.               !a2_13
+  FabricR 16 = Real 0.               !a2_23
+  FabricR 17 = Real 0.               !a2_13
+  FabricR 18 = Real 0.               !a2_13
+  FabricR 19 = Real 0.               !a2_13
+  FabricR 20 = Real 0.               !a2_23
+  FabricR 21 = Real 0.               !a2_13
+  FabricR 22 = Real 0.               !a2_13
+  FabricR 23 = Real 0.               !a2_13
+  FabricR 24 = Real 0.               !a2_13
+  FabricR 25 = Real 0.               !a2_13
+  FabricR 26 = Real 0.               !a2_23
+  FabricR 27 = Real 0.               !a2_13
+  FabricR 28 = Real 0.               !a2_13
+  FabricR 29 = Real 0.               !a2_13
+  FabricR 30 = Real 0.               !a2_23
+  FabricR 31 = Real 0.               !a2_13
+  FabricR 32 = Real 0.               !a2_13
+  FabricR 33 = Real 0.               !a2_13
+  FabricR 34 = Real 0.               !a2_13
+  FabricR 35 = Real 0.               !a2_13
+  FabricR 36 = Real 0.               !a2_23
+  FabricR 37 = Real 0.               !a2_13
+  FabricR 38 = Real 0.               !a2_13
+  FabricR 39 = Real 0.               !a2_13
+  FabricR 40 = Real 0.               !a2_23
+  FabricR 41 = Real 0.               !a2_13
+  FabricR 42 = Real 0.               !a2_13
+  FabricR 43 = Real 0.               !a2_13
+  FabricR 44 = Real 0.               !a2_13
+  FabricR 45 = Real 0.               !a2_13
+
+  {VEL}
+
+  Temperature = Real -10.0
+End
+
+
+!%%%%%%%%%%%%%%%%%%%%%      Solvers
+Solver 1
+  Equation = AIFlow
+  Variable = AIFlow
+  Variable DOFs = {AIDIM}                        !3 for 2D -- 4 for 3D
+
+  Exported Variable 1 = Temperature        !Define Temperature Mandatory!!
+  Exported Variable 1 DOFS = Integer 1
+
+  Exported Variable 2 = FabricR            !Define Fabric Variable !!Mandatory if Isotropic=False
+  Exported Variable 2 DOFS = Integer 56
+
+  Exported Variable 3 =  StrainRate        ! Compute SR
+  Exported Variable 3 DOFS = Integer 4     !4 in 2D  6 in 3D (11,22,33,12,23,31)
+
+  Exported Variable 4 =  DeviatoricStress  ! Compute Stresses
+  Exported Variable 4 DOFS = Integer 4     !4 in 2D  6 in 3D  (11,22,33,12,23,31)
+
+  Exported Variable 5 =  Spin              ! Compute Spin
+  Exported Variable 5 DOFS = Integer 1     !1 in 2D  3 in 3D (12,23,31)
+
+  Exported Variable 6 = Fabric            !Define Fabric Variable !!Mandatory if Isotropic=False
+  Exported Variable 6 DOFS = Integer 5
+
+  Exported Variable 7 = OOP            !Define Fabric Variable !!Mandatory if Isotropic=False
+  Exported Variable 7 DOFs = Integer 1
+
+  Exported Variable 8 = TensorFabric        !Define Temperature Mandatory!!
+  Exported Variable 8 DOFS = Integer 5
+
+  Procedure = "ElmerIceSolvers" "AIFlowSolver_nlS2"
+
+  Linear System Solver = Direct
+  Linear System Direct Method = umfpack
+
+! linear flow law (exponent=1) => no need for non lin iters.
+  Nonlinear System Max Iterations = 1
+  Nonlinear System Convergence Tolerance  = 1.0e-5
+  Nonlinear System Newton After Iterations = 5
+  Nonlinear System Newton After Tolerance = 1.0e-05
+  Nonlinear System Relaxation Factor = 1.00
+
+  Steady State Convergence Tolerance = Real 1.0e-4
+
+  Temperature Solution Name = String Temperature
+
+  ! Exec Solver = Before Simulation
+  Exec Solver = Never
+
+End
+
+!!!!!Fabric Solver
+Solver 2
+  Equation = FabricSpectral
+  Variable = -nooutput CompfabR    ! dumy variable
+  Variable DOFs = 1               !FabricSolver compute each variable independently, Picard Type iterations
+
+  Procedure = "ElmerIceSolvers" "FabricSolverSpectral"
+  Discontinuous Galerkin = Logical True
+
+  Fabric Name = String FabricR
+  LCap = Integer 6
+
+  Linear System Solver = Direct
+  Linear System Direct Method = umfpack
+
+  Nonlinear System Max Iterations = 10
+  Nonlinear System Convergence Tolerance  = 1.0e-5
+  Nonlinear System Relaxation Factor = 1.00
+
+  Nonlinear System Newton After Iterations = 15
+  Nonlinear System Newton After Tolerance = 1.0e-05
+
+  Steady State Convergence Tolerance = 1.0e-3
+End
+
+Solver 3
+  Equation = Fabric
+  Variable = -nooutput Compfab    ! dumy variable
+  Variable DOFs = 1               !FabricSolver compute each variable independently, Picard Type iterations
+
+  Procedure = "ElmerIceSolvers" "FabricSolver"
+  Discontinuous Galerkin = Logical True
+
+
+  Linear System Solver = Direct
+  Linear System Direct Method = umfpack
+
+  Nonlinear System Max Iterations = 10
+  Nonlinear System Convergence Tolerance  = 1.0e-5
+  Nonlinear System Relaxation Factor = 1.00
+
+  Nonlinear System Newton After Iterations = 15
+  Nonlinear System Newton After Tolerance = 1.0e-05
+
+  Steady State Convergence Tolerance = 1.0e-3
+End
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+Equation 1
+  Active Solvers(3)= 1 2 3
+End
+
+!%%%%%%%%%%%%%%%%%%%%%      Boundary Condition
+Boundary Condition 1
+  Target Boundaries({NBDRS}) = {BDRS}
+  Fabric 1 = Real 0.333333333333333 !a2_11
+  Fabric 2 = Real 0.333333333333333 !a2_22
+  Fabric 3 = Real 0.               !a2_12
+  Fabric 4 = Real 0.               !a2_23
+  Fabric 5 = Real 0.               !a2_13
+
+  FabricR 1 = Real 0.28209478329945054 !a2_11
+  FabricR 2 = Real 0.0 !a2_22
+  FabricR 3 = Real 0.0               !a2_12
+  FabricR 4 = Real 0.0               !a2_23
+  FabricR 5 = Real 0.0               !a2_13
+  FabricR 6 = Real 0.0               !a2_12
+  FabricR 7 = Real 0.0               !a2_23
+  FabricR 8 = Real 0.0               !a2_13
+  FabricR 9 = Real 0.               !a2_12
+  FabricR 10 = Real 0.               !a2_23
+  FabricR 11 = Real 0.               !a2_13
+  FabricR 12 = Real 0.               !a2_13
+  FabricR 13 = Real 0.               !a2_13
+  FabricR 14 = Real 0.               !a2_13
+  FabricR 15 = Real 0.               !a2_13
+  FabricR 16 = Real 0.               !a2_23
+  FabricR 17 = Real 0.               !a2_13
+  FabricR 18 = Real 0.               !a2_13
+  FabricR 19 = Real 0.               !a2_13
+  FabricR 20 = Real 0.               !a2_23
+  FabricR 21 = Real 0.               !a2_13
+  FabricR 22 = Real 0.               !a2_13
+  FabricR 23 = Real 0.               !a2_13
+  FabricR 24 = Real 0.               !a2_13
+  FabricR 25 = Real 0.               !a2_13
+  FabricR 26 = Real 0.               !a2_23
+  FabricR 27 = Real 0.               !a2_13
+  FabricR 28 = Real 0.               !a2_13
+  FabricR 29 = Real 0.               !a2_13
+  FabricR 30 = Real 0.               !a2_23
+  FabricR 31 = Real 0.               !a2_13
+  FabricR 32 = Real 0.               !a2_13
+  FabricR 33 = Real 0.               !a2_13
+  FabricR 34 = Real 0.               !a2_13
+  FabricR 35 = Real 0.               !a2_13
+  FabricR 36 = Real 0.               !a2_23
+  FabricR 37 = Real 0.               !a2_13
+  FabricR 38 = Real 0.               !a2_13
+  FabricR 39 = Real 0.               !a2_13
+  FabricR 40 = Real 0.               !a2_23
+  FabricR 41 = Real 0.               !a2_13
+  FabricR 42 = Real 0.               !a2_13
+  FabricR 43 = Real 0.               !a2_13
+  FabricR 44 = Real 0.               !a2_13
+  FabricR 45 = Real 0.               !a2_13
+  FabricR 46 = Real 0.               !a2_24
+  FabricR 47 = Real 0.               !a2_14
+  FabricR 48 = Real 0.               !a2_14
+  FabricR 49 = Real 0.               !a2_14
+  FabricR 50 = Real 0.               !a2_23
+  FabricR 51 = Real 0.               !a2_13
+  FabricR 52 = Real 0.               !a2_13
+  FabricR 53 = Real 0.               !a2_13
+  FabricR 54 = Real 0.               !a2_13
+  FabricR 55 = Real 0.               !a2_13
+  FabricR 56 = Real 0.               !a2_24
+  FabricR 57 = Real 0.               !a2_14
+  FabricR 58 = Real 0.               !a2_14
+  FabricR 59 = Real 0.               !a2_14
+  FabricR 60 = Real 0.               !a2_23
+  FabricR 61 = Real 0.               !a2_13
+  FabricR 62 = Real 0.               !a2_13
+  FabricR 63 = Real 0.               !a2_13
+  FabricR 64 = Real 0.               !a2_13
+  FabricR 65 = Real 0.               !a2_13
+  FabricR 66 = Real 0.               !a2_24
+  FabricR 67 = Real 0.               !a2_14
+  FabricR 68 = Real 0.               !a2_14
+  FabricR 69 = Real 0.               !a2_14
+  FabricR 70 = Real 0.               !a2_23
+  FabricR 71 = Real 0.               !a2_13
+  FabricR 72 = Real 0.               !a2_13
+  FabricR 73 = Real 0.               !a2_13
+  FabricR 74 = Real 0.               !a2_13
+  FabricR 75 = Real 0.               !a2_13
+  FabricR 76 = Real 0.               !a2_24
+  FabricR 77 = Real 0.               !a2_14
+  FabricR 78 = Real 0.               !a2_14
+  FabricR 79 = Real 0.               !a2_14
+  FabricR 80 = Real 0.               !a2_23
+  FabricR 81 = Real 0.               !a2_13
+  FabricR 82 = Real 0.               !a2_13
+  FabricR 83 = Real 0.               !a2_13
+  FabricR 84 = Real 0.               !a2_13
+  FabricR 85 = Real 0.               !a2_13
+  FabricR 86 = Real 0.               !a2_24
+  FabricR 87 = Real 0.               !a2_14
+  FabricR 88 = Real 0.               !a2_14
+  FabricR 89 = Real 0.               !a2_14
+  FabricR 90 = Real 0.               !a2_23
+  FabricR 91 = Real 0.               !a2_13
+  FabricR 92 = Real 0.               !a2_13
+  FabricR 93 = Real 0.               !a2_13
+  FabricR 94 = Real 0.               !a2_13
+  FabricR 95 = Real 0.               !a2_13
+  FabricR 96 = Real 0.               !a2_24
+  FabricR 97 = Real 0.               !a2_14
+  FabricR 98 = Real 0.               !a2_14
+  FabricR 99 = Real 0.               !a2_14
+End
