@@ -118,7 +118,7 @@ def divide_2p(background=""):
     # for ax in (ax1):
     #     ax.tick_params(axis='x', which='both', labelbottom=False, labelleft=False)
     ax2.set_xlabel("Distance from divide (km)", fontsize=fs)
-    fig.savefig("../plots/supplementary_figure_2.pdf", dpi=300)
+    fig.savefig("../plots/figure_11.pdf", dpi=300)
 
 
 def fabric(fn, xlim=(-30, 30), ylim=(-250, 3250), clim=(-0.25, 0.25)):
