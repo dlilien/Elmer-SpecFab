@@ -100,7 +100,7 @@ def main(width=7.0):
     bmo = basemaplib.AntarcticaBasemap(ax=axo)
     bmo.drawmapboundary(fill_color="C0")
 
-    bmo.plot_tif("/home/dlilien/work/antarctica_general/bedmap2_surface.tif", vmin=0, vmax=3500, cmap="gray", res=10000.0, zorder=1.5)
+    bmo.plot_tif("../general_data/bedmap2_surface.tif", vmin=0, vmax=3500, cmap="gray", res=10000.0, zorder=1.5)
     bmo.label_ll(plabels=[0, 0, 0, 0], mlabels=[0, 0, 0, 0], linestyle="solid", linewidth=0.5, latmax=89, color="k", linecolor="k")
     bmo.projected_plot(*EDC, color="C2", marker="*", linestyle="none", markersize=5)
     bmo.projected_text(EDC[0] + 10000.0, EDC[1] - 100000.0, "EDC", fontsize=10, ha="center", va="top", zorder=1000)

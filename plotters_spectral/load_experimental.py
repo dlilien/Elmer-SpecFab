@@ -6,7 +6,6 @@
 # Distributed under terms of the GNU GPL3.0 license.
 
 
-
 import os
 import pickle
 import numpy as np

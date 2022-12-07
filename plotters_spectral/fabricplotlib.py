@@ -6,7 +6,6 @@
 # Distributed under terms of the GNU GPL3.0 license.
 
 
-
 import numpy as np
 import scipy.special as sp
 import matplotlib.pyplot as plt
