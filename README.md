@@ -9,3 +9,5 @@ To run the model, a main-branch installation of [SpecFab](https://github.com/nic
 Due to several bugs, there are tight requirements on plotting dependencies.
 For plotting, Matplotlib <3.6, >3.1 is required.
 Cartopy==0.19.0.post1 is known the only version known to work.
+
+There are also data dependencies. To make figure 3, REMA and Bedmachine Antarctica need to be downloaded to the general_data folder. Projection should be EPSG:3413, and each should be a geotif.
