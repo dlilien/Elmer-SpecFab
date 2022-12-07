@@ -64,7 +64,7 @@ PROFILE = "EDC"
 
 Nt = 200  # Number of integration steps
 
-with open("DOME_C.dump", "rb") as fin:
+with open("../edc_data/DOME_C.dump", "rb") as fin:
     (fab, temp, aux) = pickle.load(fin)
 n22_0 = -0.01081568
 n20_0 = 0.10218687
