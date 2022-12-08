@@ -8,11 +8,12 @@ The model has been tested on Linux (Ubuntu and CentOS) and on MacOS. It may work
 ### Software
 Before starting installation, you need an up-to-date Fortran compiler. It needs to support large-rank arrays, so assuming that you use GCC, version 9 is the minimum. We have had success compiling with ifort as well.
 
-To run the model, a main-branch installation of [SpecFab](https://github.com/nicholasmr/specfab) is required. The shared (dynamic) library version must be compiled--this is done by default if you just use `make all` for the build.
+To run the model, a main-branch installation of [SpecFab](https://github.com/nicholasmr/specfab) is required. The shared (dynamic) library version must be compiled--this is done by default if you just use `make all` for the build. [This archived version](https://doi.org/10.5281/zenodo.7416060) was used for the paper and is known to work.
 
-A version of Elmer/Ice with the Specfab interface is needed as well--hopefully this will eventually make it to the main branch, but currently it can be found [here](https://github.com/dlilien/elmerfem/tree/spectral). When installing Elmer, you must specify the cmake option -DWITH_SpecFab, and the environment variable SpecFabROOT must be set to the folder containing libspecfab (in addition to the standard glaciology option -DWITH_ElmerIce).
+A version of Elmer/Ice with the Specfab interface is needed as well--hopefully this will eventually make it to the main branch, but currently it can be found [here](https://github.com/dlilien/elmerfem/tree/spectral). When installing Elmer, you must specify the cmake option -DWITH_SpecFab, and the environment variable SpecFabROOT must be set to the folder containing libspecfab (in addition to the standard glaciology option -DWITH_ElmerIce). [This archived version](https://doi.org/10.5281/zenodo.7415785) was used for the paper and is known to work.
 
 To reproduce meshes, [gmsh](https://gmsh.info) is needed.
+To read all data, xarray, rioxarry, and [pygeotools](https://github.com/dshean/pygeotools) are needed.
 
 My [modeltools](https://github.com/dlilien/modeltools) repository is required for plotting.
 Due to several bugs in external libraries, there are tight requirements on the more standard plotting dependencies, too.
