@@ -28,10 +28,10 @@ There are also data dependencies that are free to download but are not re-hosted
 To do all simulations from the ground up, begin with ratefactor_temperature_dependence.py. This will give the temperature dependence of migration recrystallization in the form used in the paper. Further calibration can be done by running plotters_spectral/ratefactor_calibration.py, which will produce Figure 2 of the main text and Supplementary Figure 1. If CALIBRATE is set to True, it will also calibrate the raterfactors--otherwise it will just make the plots.
 
 ### Small-scale validation
-Next, small-scale validation simulations can be run. These are contained in cube_crushing_stressrc and cube_crushing_strainrc. Each of these folders contains a single python file that will call all the simulations. For comparison, 0d simulations are contained in cube_crushing_stressrc/specfab_0d; the [README in that folder](cube_crushing_stressrc/specfab_0d/README.md) contains information on compilation and running those simulations. After those three sets of simulations are run, Figures 8 and 9 from the paper can be made, to ensure that simulations work as intended.
+Next, small-scale validation simulations can be run. These are contained in cube_crushing_stressrc and cube_crushing_strainrc. Each of these folders contains a single python file that will call all the simulations. For comparison, 0d simulations are contained in cube_crushing_stressrc/specfab_0d; the [README in that folder](cube_crushing_stressrc/specfab_0d) contains information on compilation and running those simulations. After those three sets of simulations are run, Figures 8 and 9 from the paper can be made, to ensure that simulations work as intended.
 
 ### Large-scale validation
-At this point, everything should be set for large-scale modeling. It is simplest to begin with an idealized case, to confirm everything is working before dealing with real data. An idealized divide is found in ideal_divide_spectral. Further instructions are found in the [README in that folder.](ideal_divide_spectral/README.md)
+At this point, everything should be set for large-scale modeling. It is simplest to begin with an idealized case, to confirm everything is working before dealing with real data. An idealized divide is found in ideal_divide_spectral. Further instructions are found in the [README in that folder.](ideal_divide_spectral)
 
 ### Real-data simulations
-Finally, the flow-tube simulations can be run. Further instructions are [here.](domec_transect/README.md)
+Finally, the flow-tube simulations can be run. Further instructions are [here.](domec_transect)

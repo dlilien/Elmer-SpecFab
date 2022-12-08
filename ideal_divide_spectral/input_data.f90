@@ -1,4 +1,11 @@
-      FUNCTION X_sps( Model, nodenumber, dumy) RESULT(betav)
+! -*- coding: utf-8 -*-
+! vim:fenc=utf-8
+!
+! Copyright © 2022 David Lilien <david.lilien@umanitoba.ca>
+!
+! Distributed under terms of the GNU GPL3.0 license.
+
+        FUNCTION X_sps( Model, nodenumber, dumy) RESULT(betav)
             USE DefUtils
             USE types
 

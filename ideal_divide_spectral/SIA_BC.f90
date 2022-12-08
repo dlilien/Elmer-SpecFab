@@ -1,4 +1,11 @@
-      FUNCTION USIA( Model, nodenumber, dumy) RESULT(xvel)
+! -*- coding: utf-8 -*-
+! vim:fenc=utf-8
+!
+! Copyright © 2022 David Lilien <david.lilien@umanitoba.ca>
+!
+! Distributed under terms of the GNU GPL3.0 license.
+
+        FUNCTION USIA( Model, nodenumber, dumy) RESULT(xvel)
             USE types
 
             IMPLICIT NONE

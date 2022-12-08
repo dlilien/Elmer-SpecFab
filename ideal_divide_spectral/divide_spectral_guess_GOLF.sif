@@ -1,3 +1,10 @@
+! -*- coding: utf-8 -*-
+! vim:fenc=utf-8
+!
+! Copyright © 2022 David Lilien <david.lilien@umanitoba.ca>
+!
+! Distributed under terms of the GNU GPL3.0 license.
+
 $yearinsec = 365.25*24*60*60 
 $MPainPa = 1.0e6 
 $rhoi = 917.0/(MPainPa*yearinsec^2) 

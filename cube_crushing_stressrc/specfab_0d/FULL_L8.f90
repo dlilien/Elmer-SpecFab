@@ -1,4 +1,9 @@
-! n. M. Rathmann <rathmann@nbi.ku.dk> and D. A. Lilien <dlilien90@gmail.com>, 2020
+!# -*- coding: utf-8 -*-
+! vim:fenc=utf-8
+!
+! Copyright © 2022 DA Lilien <david.lilien@umanitoba.ca> and NM Rathmann <rathmann@nbi.ku.dk>
+!
+! Distributed under terms of the GNU GPL3.0 license.
 
 program demo
 
@@ -217,4 +222,3 @@ contains
     end subroutine check  
     
 end program
-
