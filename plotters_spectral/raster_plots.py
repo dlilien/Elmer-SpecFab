@@ -18,7 +18,8 @@ from matplotlib.tri import Triangulation
 
 from labellines import labelLines
 
-import anisolib, fabricplotlib
+import anisolib
+import fabricplotlib
 from modeltools.lib import fastvtulib
 
 
@@ -67,7 +68,7 @@ def divide_2p(background=""):
     xlim = (-15, 15)
     ylim = (0, 2025)
     overall_template = "../ideal_divide_spectral/divide_v2/{:s}_t{:s}.vtu"
-    patterns = ["divide_spectral_guess_ISO", "divide_spectral_guess", "divide_spectral_guess_GOLF"]
+    patterns = ["divide_ISO", "divide_spectral_guess", "divide_spectral_guess_GOLF"]
     rheos = ["Glen's flow law", "Full nonlinear\northotropic", "Nonlinear GOLF"]
     ind = 1e6
     for pattern in patterns:

@@ -288,9 +288,9 @@ def load_spectral_data():
         for fname in FNAMES:
             for lc in spectral_fab[fname]:
                 if DIMS[ugrad] == 2:
-                    spectral_ds = netCDF4.Dataset("../cube_crushing_stressrc/solutions_{:s}/{:s}_{:s}.nc".format(lc, fname, ugrad.lower().replace("z", "y")), mode="r")
+                    spectral_ds = netCDF4.Dataset("../cube_crushing_stressrc/specfab_0d/solutions_{:s}/{:s}_{:s}.nc".format(lc, fname, ugrad.lower().replace("z", "y")), mode="r")
                 else:
-                    spectral_ds = netCDF4.Dataset("../cube_crushing_stressrc/solutions_{:s}/{:s}_{:s}.nc".format(lc, fname, ugrad.lower()), mode="r")
+                    spectral_ds = netCDF4.Dataset("../cube_crushing_stressrc/specfab_0d/solutions_{:s}/{:s}_{:s}.nc".format(lc, fname, ugrad.lower()), mode="r")
 
                 def loadvar(field):
                     return np.array(spectral_ds.variables[field][:])

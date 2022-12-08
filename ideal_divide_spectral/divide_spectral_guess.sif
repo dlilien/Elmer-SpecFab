@@ -1,0 +1,633 @@
+$yearinsec = 365.25*24*60*60 
+$MPainPa = 1.0e6 
+$rhoi = 917.0/(MPainPa*yearinsec^2) 
+$gravity = 9.80*yearinsec^2
+$nGlen = 4.5
+$ZbEnd = 337 !Altitude of the bedrock downstream, m
+$TubeSurf = 5000 !surface of the tube, m2
+$a=0.024 !accumulation, m/a
+
+$ function capacity(T) { _capacity=146.3+(7.253*T)}
+$ function conductivity(T)  { _conductivity=9.828*exp(-5.7E-03*T)}
+$ function pressuremeltingpoint(PIN) {\
+  P = PIN;\
+  if (P<0.0) P=0.0;\
+  beta=9.8E-08*1.0E06;\
+  _pressuremeltingpoint=273.15-(beta*P);\
+}
+
+
+
+Header
+  Mesh DB "." "divide_v2"
+End
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+Simulation
+  Coordinate System  = Cartesian 2D
+  Simulation Type = Transient
+
+  Timestepping Method = "bdf"
+  BDF Order = 1
+  Output Intervals(7) = 100000 80 80 40 20 10 1
+  Timestep Intervals(7) = 1 79 719 9599 14999 10001 10
+  Timestep Sizes(7) = 0.00001 1.25 1.25 2.5 5.0 10.0 10
+
+  Steady State Min Iterations = 1
+  Steady State Max Iterations = 5
+
+  Output File = "divide_spectral_guess.result"
+  Post File = "divide_spectral_guess.vtu"
+  max output level = 3
+
+  Initialize Dirichlet Conditions = Logical False
+End
+
+Body 1
+  Equation = 1
+  Body Force = 1
+  Material = 1
+  Initial Condition = 1
+End
+
+!top
+Body 2
+  Equation = 2
+  Body Force = 2
+  Material = 1
+  Initial Condition = 2
+End
+
+Constants
+   Gas Constant = Real 8.314
+End
+
+!%%%%%%%%%%%%%%%%%%%%%      Body Force
+Body Force 1
+  AIFlow Force 2 = Real -0.00899  ! body force, i.e. gravity * density
+
+  Temp Volume Source = Equals W
+
+  DGAge Source = Real 1.0
+End
+
+Body Force 2
+  Zs Top Accumulation Flux 1 = Real 0.0
+  Zs Top Accumulation Flux 2 = Real 0.1
+End
+
+!%%%%%%%%%%%%%%%%%%%%%      Material
+Material 1
+!!!!! For AIFlows...
+  Name = "Ice"
+  !Constant Temperature = Real -10.0
+  Powerlaw Exponent = Real 3.0
+  Min Second Invariant = Real 1.0e-10  ! Min value for the second invariant of strain-rates
+  Reference Temperature = Real -10.0   ! T0 (Celsius)!
+  Fluidity Parameter = Real 30.986    ! Bn(T0) to match what we used for inversion
+  Limit Temperature = Real -10.0        ! TL  (Celsius)!
+  Activation Energy 1 = Real 6.0e4     ! different from elmer/ice example to match Cuffey and Patterson
+  Activation Energy 2 = Real 1.39e5 
+  Viscosity File = FILE "040010010.Va"
+  Viscosity = Real 1.0 
+  Isotropic = Logical False
+
+  Interaction Parameter = Real 0.06
+
+!!!! For Fabric Solver
+  ! Diffusion Parameter = Real 3.0e-3   ! Diffusion term. By default set to 0 if not defined
+  Diffusion temp dependence = Real 0.0
+  Diffusion Intercept = Real 0.0
+  Max Diffusion = Real 0.0
+
+  ! Migration Gamma = Real 0.1
+  Migration Prefactor = Real 4.4e+07
+  Migration A = Real 4.038578e+03
+  Max Migration = Real 10.0
+
+  ! Turn off normal fabric evolution
+  Lattice Rotation = Real 1.0
+
+  ! For temperature
+  Density = Real $rhoi
+  Temp Heat Capacity = Variable Temp
+    Real MATC "capacity(tx)*yearinsec^2"
+  Temp Heat Conductivity = Variable Temp
+    Real MATC "conductivity(tx)*yearinsec*1.0E-06"
+  Temp Upper Limit = Variable AIFlow 3
+         Real MATC "pressuremeltingpoint(tx)"
+  Temp Lower Limit = Real 0.0
+
+  Flux = Real 75.0
+End
+
+
+!%%%%%%%%%%%%%%%%%%%%%      Initial Condition
+Initial Condition 1
+  FabricR 1 = Real 0.28209478329945054 !a2_11
+  FabricR 2 = Variable Coordinate 2
+    Real Procedure "input_data.so" "nlm2sf"
+  FabricR 3 = Real 0.0               !a2_12
+  FabricR 4 = Variable Coordinate 2
+    Real Procedure "input_data.so" "nlm4sf"
+  FabricR 5 = Real 0.0               !a2_13
+  FabricR 6 = Variable Coordinate 2
+    Real Procedure "input_data.so" "nlm6sf"
+  FabricR 7 = Variable Coordinate 2
+    Real Procedure "input_data.so" "nlm7sf"
+  FabricR 8 = Real 0.0               !a2_13
+  FabricR 9 = Variable Coordinate 2
+    Real Procedure "input_data.so" "nlm9sf"
+  FabricR 10 = Real 0.               !a2_23
+  FabricR 11 = Variable Coordinate 2
+    Real Procedure "input_data.so" "nlm11sf"
+  FabricR 12 = Real 0.               !a2_13
+  FabricR 13 = Variable Coordinate 2
+    Real Procedure "input_data.so" "nlm13sf"
+  FabricR 14 = Real 0.               !a2_13
+  FabricR 15 = Variable Coordinate 2
+    Real Procedure "input_data.so" "nlm15sf"
+  FabricR 16 = Real 0.               !a2_23
+  FabricR 17 = Real 0.               !a2_13
+  FabricR 18 = Real 0.               !a2_13
+  FabricR 19 = Real 0.               !a2_13
+  FabricR 20 = Real 0.               !a2_23
+  FabricR 21 = Real 0.               !a2_13
+  FabricR 22 = Real 0.               !a2_13
+  FabricR 23 = Real 0.               !a2_13
+  FabricR 24 = Real 0.               !a2_13
+  FabricR 25 = Real 0.               !a2_13
+  FabricR 26 = Real 0.               !a2_23
+  FabricR 27 = Real 0.               !a2_13
+  FabricR 28 = Real 0.               !a2_13
+  FabricR 29 = Real 0.               !a2_13
+  FabricR 30 = Real 0.               !a2_23
+  FabricR 31 = Real 0.               !a2_13
+  FabricR 32 = Real 0.               !a2_13
+  FabricR 33 = Real 0.               !a2_13
+  FabricR 34 = Real 0.               !a2_13
+  FabricR 35 = Real 0.               !a2_13
+  FabricR 36 = Real 0.               !a2_23
+  FabricR 37 = Real 0.               !a2_13
+  FabricR 38 = Real 0.               !a2_13
+  FabricR 39 = Real 0.               !a2_13
+  FabricR 40 = Real 0.               !a2_23
+  FabricR 41 = Real 0.               !a2_13
+  FabricR 42 = Real 0.               !a2_13
+  FabricR 43 = Real 0.               !a2_13
+  FabricR 44 = Real 0.               !a2_13
+  FabricR 45 = Real 0.               !a2_13
+  FabricR 46 = Real 0.               !a2_23
+  FabricR 47 = Real 0.               !a2_13
+  FabricR 48 = Real 0.               !a2_13
+  FabricR 49 = Real 0.               !a2_13
+  FabricR 50 = Real 0.               !a2_23
+  FabricR 51 = Real 0.               !a2_13
+  FabricR 52 = Real 0.               !a2_13
+  FabricR 53 = Real 0.               !a2_13
+  FabricR 54 = Real 0.               !a2_13
+  FabricR 55 = Real 0.               !a2_13
+  FabricR 56 = Real 0.               !a2_23
+  FabricR 57 = Real 0.               !a2_13
+  FabricR 58 = Real 0.               !a2_13
+  FabricR 59 = Real 0.               !a2_13
+  FabricR 60 = Real 0.               !a2_23
+  FabricR 61 = Real 0.               !a2_13
+  FabricR 62 = Real 0.               !a2_13
+  FabricR 63 = Real 0.               !a2_13
+  FabricR 64 = Real 0.               !a2_13
+  FabricR 65 = Real 0.               !a2_13
+  FabricR 66 = Real 0.               !a2_23
+  FabricR 67 = Real 0.               !a2_13
+  FabricR 68 = Real 0.               !a2_13
+  FabricR 69 = Real 0.               !a2_13
+  FabricR 70 = Real 0.               !a2_23
+  FabricR 71 = Real 0.               !a2_13
+  FabricR 72 = Real 0.               !a2_13
+  FabricR 73 = Real 0.               !a2_13
+  FabricR 74 = Real 0.               !a2_13
+  FabricR 75 = Real 0.               !a2_13
+  FabricR 76 = Real 0.               !a2_23
+  FabricR 77 = Real 0.               !a2_13
+  FabricR 78 = Real 0.               !a2_13
+  FabricR 79 = Real 0.               !a2_13
+  FabricR 80 = Real 0.               !a2_23
+  FabricR 81 = Real 0.               !a2_13
+  FabricR 82 = Real 0.               !a2_13
+  FabricR 83 = Real 0.               !a2_13
+  FabricR 84 = Real 0.               !a2_13
+  FabricR 85 = Real 0.               !a2_13
+  FabricR 86 = Real 0.               !a2_23
+  FabricR 87 = Real 0.               !a2_13
+  FabricR 88 = Real 0.               !a2_13
+  FabricR 89 = Real 0.               !a2_13
+  FabricR 90 = Real 0.               !a2_23
+
+  Temp = Variable coordinate 2
+    Real Matc "235.0 - (2000.0 - tx) / (2000.0 - 0.0) * (235.0 - 273.15 + 2.5)"
+  Temp Homologous = Variable coordinate 2
+    Real Matc "235.0 - 273.15 - (2000.0 - tx) / (2000.0 - 0.0) * (235.0 - 273.15 + 2.5)"
+  DGAge = Variable Coordinate 3
+    REAL Procedure "SIA_BC.so" "AgeFromCFRaymond"
+  Age = Variable Coordinate 3
+    REAL Procedure "SIA_BC.so" "AgeFromCFRaymond"
+
+  ExportedZsTop = Real 2000.0
+End
+
+Initial Condition 2
+  "Zs Top" = Variable Coordinate 1
+    Real Procedure "ElmerIceUSF" "ZsTopIni"
+End
+
+!%%%%%%%%%%%%%%%%%%%%%      Solvers
+Solver 1
+   Exec Solver = "Before Simulation"
+   Equation = "Normal vector"
+   Variable = "Normal Vector"   
+   Variable DOFs = 2
+   Optimize Bandwidth = Logical False 
+   Procedure = "ElmerIceSolvers" "ComputeNormalSolver"
+   ComputeAll = Logical True
+End
+
+Solver 2
+  Equation = AIFlow
+  Variable = AIFlow
+  Variable DOFs = 3                        !3 for 2D -- 4 for 3D
+
+  Exported Variable 1 = FabricR            !Define Fabric Variable !!Mandatory if Isotropic=False
+  Exported Variable 1 DOFS = Integer 90
+
+  Exported Variable 2 =  StrainRate        ! Compute SR
+  Exported Variable 2 DOFS = Integer 4     !4 in 2D  6 in 3D (11,22,33,12,23,31)
+
+  Exported Variable 3 =  DeviatoricStress  ! Compute Stresses
+  Exported Variable 3 DOFS = Integer 4     !4 in 2D  6 in 3D  (11,22,33,12,23,31)
+
+  Exported Variable 4 =  Spin              ! Compute Spin
+  Exported Variable 4 DOFS = Integer 1     !1 in 2D  3 in 3D (12,23,31)
+
+  Exported Variable 5 = -dofs 1 EffectiveViscosity
+  Exported Variable 6 = -dofs 36 EnhancementFactors
+
+  Procedure = "ElmerIceSolvers" "AIFlowSolver_spectral"
+
+  Temperature Solution Name = String "Temp Homologous"
+  Fabric Name = String "Fabricr"
+  LCap = Integer 8
+  Bubbles = Logical True
+
+  Linear System Solver = Iterative
+  Linear System Iterative Method = BiCGStab
+  Linear System Preconditioning = ILU2
+  Linear System Convergence Tolerance = 1.0e-6
+  Linear System Max Iterations = 1500
+  Linear System Abort Not Converged = Logical False
+
+  Nonlinear System Max Iterations = 15
+  Nonlinear System Convergence Tolerance  = 1.0e-5
+  Nonlinear System Newton After Iterations = 15
+  Nonlinear System Newton After Tolerance = 1.0e-05
+  Nonlinear System Relaxation Factor = 1.0
+
+  Steady State Convergence Tolerance = Real 1.0e-4
+  Steady State Relaxation Factor = Real 1.0
+End
+
+!!!!!Fabric Solver
+Solver 3
+  Equation = FabricSpectral
+  Variable = -nooutput CompfabR    ! dumy variable
+  Variable DOFs = 1               !FabricSolver compute each variable independently, Picard Type iterations
+  ! Exec Solver = Never
+
+  Procedure = "ElmerIceSolvers" "FabricSolverSpectral"
+  Discontinuous Galerkin = Logical True
+
+  Fabric Name = String FabricR
+  Temperature Solution Name = String "Temp Homologous"
+  LCap = Integer 8
+
+
+  Exported Variable 1 = -dofs 1 "Flux"
+
+  Linear System Solver = Direct
+  Linear System Direct Method = umfpack
+
+  Nonlinear System Max Iterations = 2
+  Nonlinear System Convergence Tolerance  = 1.0e-5
+  Nonlinear System Relaxation Factor = 1.00
+
+  Nonlinear System Newton After Iterations = 15
+  Nonlinear System Newton After Tolerance = 1.0e-05
+
+  Steady State Convergence Tolerance = 1.0e-3
+End
+
+Solver 4
+   Equation = "Free Surface Top"
+   Variable = String "Zs Top"
+   Variable DOFs =  1
+   Exported Variable 1 = String "Zs Top Residual"
+   Exported Variable 1 DOFs = 1
+   Exported Variable 2 = -dofs 1 "ZsTopIni"
+
+   Procedure = "FreeSurfaceSolver" "FreeSurfaceSolver"
+   ! Before Linsolve = "EliminateDirichlet" "EliminateDirichlet"
+
+   Linear System Solver = Iterative
+   Linear System Iterative Method = BiCGStab
+   Linear System Max Iterations = 1500
+   Linear System Convergence Tolerance = Real 1.0e-9
+   Linear System Abort Not Converged = True
+   Linear System Residual Output = 0
+
+   Nonlinear System Max Iterations = 100
+   Nonlinear System Convergence Tolerance  = 1.0e-8
+   Nonlinear System Relaxation Factor = 0.50
+   Nonlinear System Abort Not Converged = Logical True
+
+   Steady State Convergence Tolerance = 1.0e-7
+
+   Stabilization Method = Bubbles    
+   Apply Dirichlet = Logical False 
+
+   Free Surface Relaxation Factor = Real 1.0   
+   Use Accumulation = Logical True
+   Normal Flux = Logical False    
+End
+
+Solver 5
+  Equation = DeformationalHeat
+  Variable = W
+  Variable DOFs = 1
+  Exec Solver = After Timestep
+
+  procedure =  "ElmerIceSolvers" "DeformationalHeatSolver"
+  Flow Solver Name = String "AIFlow"
+  Flow Solution Name = String "AIFlow"
+  Flow Solution = String "AIFlow"
+
+  Linear System Solver = Iterative
+  Linear System Iterative Method = BiCGStab
+  Linear System Max Iterations = 1500
+  Linear System Convergence Tolerance = Real 1.0e-9
+  Linear System Abort Not Converged = True
+  Linear System Residual Output = 0
+End
+
+Solver 6
+  Equation = String "Homologous Temperature Equation"
+  Procedure =  File "ElmerIceSolvers" "TemperateIceSolver"
+  ! Comment next line in parallel, as EliminateDirichlet does
+  ! not work in parallel
+  !------------------------------------------------------------
+  Exec Solver = After Timestep
+  Variable = String "Temp"
+  Variable DOFs = 1
+
+  ! Discontinuous Galerkin = Logical True
+  Linear System Solver = "Iterative"
+  Linear System Iterative Method = "BiCGStab"
+  Linear System Max Iterations = 5000
+  Linear System Convergence Tolerance = 1.0E-07
+  Linear System Abort Not Converged = True
+  Linear System Preconditioning = "ILU1"
+  Linear System Residual Output = 0
+  Steady State Convergence Tolerance = 1.0E-05
+  Nonlinear System Convergence Tolerance = 1.0E-06
+  Nonlinear System Max Iterations = 50
+  Nonlinear System Relaxation Factor = Real 8.0E-01
+
+  Apply Dirichlet = Logical True
+  Stabilize = True
+
+  Flow Solution Name = String "AIFlow"
+  Flow Solver Name = String "AIFlow"
+  Flow Solution = String "AIFlow"
+  ! those two variables are needed in order to store
+  ! the relative or homologous temperature as well
+  ! as the residual
+  !-------------------------------------------------
+  Exported Variable 1 = String "Temp Homologous"
+  Exported Variable 1 DOFs = 1
+  Exported Variable 2 = String "Temp Residual"
+  Exported Variable 2 DOFs = 1
+  Exported Variable 3 = String "Flux"
+  Exported Variable 3 DOFs = 1
+  Exported Variable 4 = -dofs 1 "ftw" 
+  Exported Variable 5 = -dofs 1 "EtaInit" 
+  Exported Variable 6 = -dofs 1 "tempdum" 
+  Exported Variable 7 = -dofs 1 "dudy"
+  Exported Variable 8 = -dofs 5 TensorFabric
+End
+
+Solver 7
+  Equation = "AdvReact"
+  Exec Solver = "After Timestep"
+  Procedure = File "AdvectionReaction" "AdvectionReactionSolver"
+  ! this is the DG variable, which is not part of the output
+  Variable =  -nooutput "DGAge"
+  ! this tells that the solver is run on DG mesh
+  Discontinuous Galerkin = Logical True
+  ! the solver can account for upper and lower limits of the variable
+  ! imposed by formulation of an variational inequality (VI)
+  ! next line switches the VI to be accounted for
+  Limit Solution = Logical True
+
+  Linear System Solver = Direct
+  Linear System Direct Method = umfpack
+  !Linear System Iterative Method = BiCGStab
+  !Linear System Max Iterations  = 1000
+  !Linear System Preconditioning = ILU1
+  !Linear System Convergence Tolerance = 1.0e-06
+  ! Variational inequality makes it a non-linear problem
+  Nonlinear System Max Iterations = 40
+  Nonlinear System Min Iterations = 2
+  Nonlinear System Convergence Tolerance = 1.0e-04
+
+  ! This is the variable that is used to interpolate
+  ! the DG solution to the regular FEM mesh in order
+  ! to get a correct output
+  Exported Variable 1 = Age
+  Exported Variable 1 DOFS = 1
+End
+
+Solver 8
+  Equation = "Mesh Update"
+  Linear System Solver = Iterative
+  Linear System Iterative Method = BiCGStab
+  Linear System Max Iterations  = 1000
+  Linear System Preconditioning = ILU1
+  Linear System Convergence Tolerance = 1.0e-06
+
+  Steady State Convergence Tolerance = 1.0e-05
+  Exec Solver = After Timestep
+End
+
+Solver 9
+  Equation = "ExportVerticallyTop"
+  Procedure = File "ElmerIceSolvers" "ExportVertically"
+  Variable = String "ExportedZsTop"
+  Variable DOFs = 1
+  Linear System Solver = Iterative
+  Linear System Iterative Method = BiCGStab
+  Linear System Max Iterations  = 1000
+  Linear System Preconditioning = ILU1
+  Linear System Convergence Tolerance = 1.0e-06
+End
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+Equation 1
+  Active Solvers(8)= 1 2 3 5 6 7 8 9
+  Flow Solution Name = String "AIFlow"
+  Convection = String Computed
+End
+
+Equation 2
+  Active Solvers(1)= 4
+  Flow Solution Name = String "AIFlow"
+  Convection = String Computed
+End
+
+!%%%%%%%%%%%%%%%%%%%%%      Boundary Condition
+Boundary Condition 1
+  Target Boundaries = 3
+  Body id = 2
+  name= String 'top'
+  FabricR 1 = Real 0.28209478329945054 !a2_11
+  FabricR 2 = Real 0.0 !a2_22
+  FabricR 3 = Real 0.0               !a2_12
+  FabricR 4 = Real 0.0               !a2_23
+  FabricR 5 = Real 0.0               !a2_13
+  FabricR 6 = Real 0.0               !a2_12
+  FabricR 7 = Real 0.0               !a2_23
+  FabricR 8 = Real 0.0               !a2_13
+  FabricR 9 = Real 0.               !a2_12
+  FabricR 10 = Real 0.               !a2_23
+  FabricR 11 = Real 0.               !a2_13
+  FabricR 12 = Real 0.               !a2_13
+  FabricR 13 = Real 0.               !a2_13
+  FabricR 14 = Real 0.               !a2_13
+  FabricR 15 = Real 0.               !a2_13
+  FabricR 16 = Real 0.               !a2_23
+  FabricR 17 = Real 0.               !a2_13
+  FabricR 18 = Real 0.               !a2_13
+  FabricR 19 = Real 0.               !a2_13
+  FabricR 20 = Real 0.               !a2_23
+  FabricR 21 = Real 0.               !a2_13
+  FabricR 22 = Real 0.               !a2_13
+  FabricR 23 = Real 0.               !a2_13
+  FabricR 24 = Real 0.               !a2_13
+  FabricR 25 = Real 0.               !a2_13
+  FabricR 26 = Real 0.               !a2_23
+  FabricR 27 = Real 0.               !a2_13
+  FabricR 28 = Real 0.               !a2_13
+  FabricR 29 = Real 0.               !a2_13
+  FabricR 30 = Real 0.               !a2_23
+  FabricR 31 = Real 0.               !a2_13
+  FabricR 32 = Real 0.               !a2_13
+  FabricR 33 = Real 0.               !a2_13
+  FabricR 34 = Real 0.               !a2_13
+  FabricR 35 = Real 0.               !a2_13
+  FabricR 36 = Real 0.               !a2_23
+  FabricR 37 = Real 0.               !a2_13
+  FabricR 38 = Real 0.               !a2_13
+  FabricR 39 = Real 0.               !a2_13
+  FabricR 40 = Real 0.               !a2_23
+  FabricR 41 = Real 0.               !a2_13
+  FabricR 42 = Real 0.               !a2_13
+  FabricR 43 = Real 0.               !a2_13
+  FabricR 44 = Real 0.               !a2_13
+  FabricR 45 = Real 0.               !a2_13
+  FabricR 46 = Real 0.               !a2_23
+  FabricR 47 = Real 0.               !a2_13
+  FabricR 48 = Real 0.               !a2_13
+  FabricR 49 = Real 0.               !a2_13
+  FabricR 50 = Real 0.               !a2_23
+  FabricR 51 = Real 0.               !a2_13
+  FabricR 52 = Real 0.               !a2_13
+  FabricR 53 = Real 0.               !a2_13
+  FabricR 54 = Real 0.               !a2_13
+  FabricR 55 = Real 0.               !a2_13
+  FabricR 56 = Real 0.               !a2_23
+  FabricR 57 = Real 0.               !a2_13
+  FabricR 58 = Real 0.               !a2_13
+  FabricR 59 = Real 0.               !a2_13
+  FabricR 60 = Real 0.               !a2_23
+  FabricR 61 = Real 0.               !a2_13
+  FabricR 62 = Real 0.               !a2_13
+  FabricR 63 = Real 0.               !a2_13
+  FabricR 64 = Real 0.               !a2_13
+  FabricR 65 = Real 0.               !a2_13
+  FabricR 66 = Real 0.               !a2_23
+  FabricR 67 = Real 0.               !a2_13
+  FabricR 68 = Real 0.               !a2_13
+  FabricR 69 = Real 0.               !a2_13
+  FabricR 70 = Real 0.               !a2_23
+  FabricR 71 = Real 0.               !a2_13
+  FabricR 72 = Real 0.               !a2_13
+  FabricR 73 = Real 0.               !a2_13
+  FabricR 74 = Real 0.               !a2_13
+  FabricR 75 = Real 0.               !a2_13
+  FabricR 76 = Real 0.               !a2_23
+  FabricR 77 = Real 0.               !a2_13
+  FabricR 78 = Real 0.               !a2_13
+  FabricR 79 = Real 0.               !a2_13
+  FabricR 80 = Real 0.               !a2_23
+  FabricR 81 = Real 0.               !a2_13
+  FabricR 82 = Real 0.               !a2_13
+  FabricR 83 = Real 0.               !a2_13
+  FabricR 84 = Real 0.               !a2_13
+  FabricR 85 = Real 0.               !a2_13
+  FabricR 86 = Real 0.               !a2_23
+  FabricR 87 = Real 0.               !a2_13
+  FabricR 88 = Real 0.               !a2_13
+  FabricR 89 = Real 0.               !a2_13
+  FabricR 90 = Real 0.               !a2_23
+
+  Mesh Update 1 = Real 0.0
+  Mesh Update 2 = Variable Zs Top
+     Real Procedure "ElmerIceUSF" "ZsTopMzsIni"
+
+  DGAge = Real 0.0
+  Temp = Real 235.0
+
+  ExportedZsTop = Equals Coordinate 2
+End
+
+Boundary Condition 2
+  Target Boundaries = 1
+  name= String 'bottom'
+  AIFlow 1 = Real 0.0e0
+  AIFlow 2 = Real 0.0e0
+
+  Mesh Update 1 = Real 0.0
+  Mesh Update 2 = Real 0.0
+
+  Temp Flux BC = Logical True
+  Temp Heat Flux = Real 1.893  ! 60 mW/m^2
+End
+
+Boundary Condition 3
+  Target Boundaries = 4
+  name = string 'left'
+  Force 1 = Variable Coordinate 2, ExportedZsTop
+    Real MATC "(2000.0 - tx(0)) * rhoi * gravity" 
+
+  Mesh Update 1 = Real 0.0
+End
+
+
+Boundary Condition 4
+  Target Boundaries = 2
+  name = string 'right'
+  Force 1 = Variable Coordinate 2, ExportedZsTop
+    Real MATC "-(2000.0 - tx(0)) * rhoi * gravity" 
+  ! AIFlow 1 = Variable Coordinate 1
+  !      REAL Procedure "SIA_BC.so" "USIA"
+
+  Mesh Update 1 = Real 0.0
+End
