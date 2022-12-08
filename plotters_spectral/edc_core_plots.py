@@ -50,7 +50,7 @@ def edc_plot_calib(fabname="tensorfabric", tube="", subsr="", folder="domec"):
     ls = [["solid"], ["dashed"]]
     ns = [["Lab"], ["Ice core"]]
     for calib, names, linestyles in zip(["", "_calib"], ns, ls):
-        fn_glob = "../domec_transect/domec_L6/domec{:s}_full{:s}{:s}_t????.vtu".format(tube, subsr, calib)
+        fn_glob = "../domec_transect/domec_v2/domec{:s}_full{:s}{:s}_t????.vtu".format(tube, subsr, calib)
 
         files = glob.glob(fn_glob)
         inds = np.argsort(np.array([float(fn[-8:-4]) for fn in files]))

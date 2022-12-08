@@ -36,7 +36,7 @@ pres_fnum = 7
 
 def domec_fabric():
     # We want to find the filename for the highest index where we have all 3
-    fn_glob = "../domec_transect/domec_L6/domec_tube_full_aniso_calib_t????.vtu"
+    fn_glob = "../domec_transect/domec_v2/domec_tube_full_aniso_calib_t????.vtu"
     files = glob(fn_glob)
     inds = np.argsort(np.array([float(fn[-8:-4]) for fn in files]))
     fn = files[inds[-1]]

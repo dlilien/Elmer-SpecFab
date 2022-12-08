@@ -56,7 +56,7 @@ def main(width=7.0):
     bm1.drawmeridians(np.arange(110.0, 130.0, 1.0), labels=[0, 0, 1, 0], fontsize=FS)
     ax.text(-0.01, 0.5, "124\N{DEGREE SIGN}E", ha="right", va="center", rotation=90, transform=ax.transAxes, fontsize=10)
 
-    transect_fn = "../domec_transect/domain.shp"
+    transect_fn = "../domec_transect/domain_v2.shp"
     cm = bm1.plot_tif("../general_data/bedmap2_bed.tif", cmap="BrBG_r", vmin=-300, vmax=300)
     axo = fig.add_axes([xoff, yboff, 0.44, 0.160])
     axo.tick_params(axis="both", which="both", bottom=False, top=False, left=False, right=False, labelbottom=False, labelleft=False)
