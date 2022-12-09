@@ -118,7 +118,8 @@ def plot_model(vtu, ax_dl, ax_theta, x, y_pts, fabname="tensorfabric", linestyle
     da = w[:, 1] - w[:, 0]
     theta = np.arctan2(v[:, 0, 0], v[:, 1, 0]) * 180.0 / np.pi
     theta[theta < 0.0] = theta + 180.0
-    ax_dl.plot(da, y, color=color, linestyle=linestyle, label=label)
+    depth = np.max(y) - y
+    ax_dl.plot(A[:, 1, 1] - A[:, 0, 0], depth, color=color, linestyle=linestyle, label=label)
     ax_theta.plot(theta, y, color=color, linestyle=linestyle, label=label)
 
 
@@ -203,7 +204,7 @@ def modeled_vs_measured_pres_supp():
     bot_axes[3].set_xlabel("Horizontal eigenvalue difference                                   ", fontsize=10)
     top_axes[0].set_ylabel("Depth (m)", fontsize=10)
     bot_axes[0].set_ylabel("Depth (m)", fontsize=10)
-    bot_axes[0].legend(loc="upper left", ncol=2, bbox_to_anchor=(0.0, -0.18), fontsize=8)
+    bot_axes[0].legend(loc="upper left", ncol=4, bbox_to_anchor=(0.0, -0.18), fontsize=8)
 
     fig.savefig("../plots/supplementary_figure_2.pdf")
 
