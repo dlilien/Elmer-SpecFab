@@ -352,7 +352,7 @@ nlm_girdle = np.real(sf.a4_to_nlm(a4))
 # print(nlm_girdle, nlm_girdle[3],nlm_girdle[10])
 x_, y_ = np.real(nlm_girdle[3]) / normfac, np.real(nlm_girdle[10]) / normfac
 ax.plot(x_, y_, marker="o", ms=mse, ls="none", c=c_girdle, label=None)
-plt.text(x_, y_ + dytext, "Planar\nisotropic", weight="bold", color=c_girdle, ha="center", va="bottom", ma="center", fontsize=FSANNO)
+plt.text(x_, y_ + dytext, "Planar\nconfined", weight="bold", color=c_girdle, ha="center", va="bottom", ma="center", fontsize=FSANNO)
 
 # DDRX steady state
 x_, y_ = np.real(nlm_ddrx2[-1, 3]), np.real(nlm_ddrx2[-1, 10])
@@ -481,8 +481,8 @@ for ii, expr in enumerate(experiments):
 # Aux
 
 plt.sca(ax)
-plt.xlabel(r"$\hat{\psi}_2^0$")
-plt.ylabel(r"$\hat{\psi}_4^0$")
+plt.xlabel(r"$\hat{\varrho}_2^0/\hat{\varrho}_0^0$")
+plt.ylabel(r"$\hat{\varrho}_4^0/\hat{\varrho}_0^0$")
 
 leg = plt.legend(bbox_to_anchor=(1.001, 0.99), fontsize=FSLEG, frameon=True, loc="upper left", **legkwargs)
 leg.set_title("Observations", prop={"weight": "bold", "size": FSLEG})

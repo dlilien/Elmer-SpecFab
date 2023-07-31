@@ -321,6 +321,9 @@ ax1.legend(loc="best", fontsize=FS, frameon=False)
 
 ax2.set_xlabel(r"Temperature ($^\circ$C)")
 ax2.plot(T, -zT, color="k")
+
+ax1.text(0.01, 0.99, "a", va="top", ha="left", transform=ax1.transAxes, fontsize=BFS)
+ax2.text(0.07, 0.99, "b", va="top", ha="left", transform=ax2.transAxes, fontsize=BFS)
 fig.savefig("../plots/figure_2.pdf", dpi=300)
 
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(5.5, 4.0), sharey=True, gridspec_kw=dict(left=0.12, right=0.98, top=0.98, bottom=0.13, width_ratios=[1, 0.5]))
@@ -353,4 +356,7 @@ ax1.legend(loc="best", fontsize=FS, frameon=False)
 
 ax2.set_xlabel(r"Temperature ($^\circ$C)")
 ax2.plot(T, -zT, color="k")
+
+ax1.text(0.01, 0.99, "a", va="top", ha="left", transform=ax1.transAxes, fontsize=BFS)
+ax2.text(0.07, 0.99, "b", va="top", ha="left", transform=ax2.transAxes, fontsize=BFS)
 fig.savefig("../plots/supplementary_figure_1.pdf", dpi=300)
